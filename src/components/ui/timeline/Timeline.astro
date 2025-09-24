@@ -1,0 +1,121 @@
+---
+interface Item {
+  title: string;
+  company: string;
+  region: string;
+  description: string;
+  technologies?: string[];
+  from: string;
+  to: string;
+}
+
+interface Props {
+  items: Item[];
+  icons?: { job: string; company: string; location: string; date?: string };
+  centered?: boolean;
+}
+// fallback icons from assets if not provided via props
+// @ts-ignore - vite raw import yields string
+import jobIconRaw from '../../../assets/icons/job-title-icon.svg?raw';
+// @ts-ignore
+import companyIconRaw from '../../../assets/icons/company-icon.svg?raw';
+// @ts-ignore
+import locationIconRaw from '../../../assets/icons/location-icon.svg?raw';
+// @ts-ignore
+import dateIconRaw from '../../../assets/icons/date-icon.svg?raw';
+
+function normalizeIcon(raw: string): string {
+  let s = raw
+    .replace(/<\?xml[\s\S]*?\?>/g, '')
+    .replace(/<!--([\s\S]*?)-->/g, '')
+    .replace(/width=\"[^\"]+\"/g, 'width="16"')
+    .replace(/height=\"[^\"]+\"/g, 'height="16"')
+    .replace(/stroke=\"#000000\"/g, 'stroke="currentColor"')
+    .replace(/fill=\"#000000\"/g, 'fill="none"')
+    .replace(/fill=\"#ffffff\"/gi, 'fill="none"');
+  // Ensure root svg has fill="none" and stroke="currentColor"
+  s = s.replace(/<svg([^>]*)>/, (m, attrs) => {
+    let a = attrs;
+    if (!/fill=/.test(a)) a += ' fill="none"';
+    if (!/stroke=/.test(a)) a += ' stroke="currentColor"';
+    return `<svg${a}>`;
+  });
+  return s;
+}
+
+const props = Astro.props as Props;
+const jobIcon = props.icons?.job ?? normalizeIcon(jobIconRaw);
+const companyIcon = props.icons?.company ?? normalizeIcon(companyIconRaw);
+const locationIcon = props.icons?.location ?? normalizeIcon(locationIconRaw);
+const dateIcon = props.icons?.date ?? normalizeIcon(dateIconRaw);
+const { items, centered = true } = props;
+---
+
+<div class="m relative max-w-5xl px-0 md:px-0">
+  <div
+    class="pointer-events-none absolute inset-y-0 left-0.5 w-px bg-[var(--border)] md:left-5"
+  >
+  </div>
+  <div class="space-y-16 md:space-y-12">
+    {
+      items.map((item) => (
+        <div class="relative pl-5 md:pl-16">
+          <div class="absolute top-0 left-0 size-2 rounded-full bg-[var(--accent)] ring-2 ring-[color:var(--background)] md:top-1 md:left-4 md:size-3 md:ring-4" />
+          <div class="card-surface w-full min-w-0 p-4 md:p-6">
+            <div class="mb-2">
+              <h3 class="m-0 flex items-center gap-2 text-xs font-semibold">
+                <span
+                  class="inline-flex items-center justify-center"
+                  aria-hidden="true"
+                  set:html={jobIcon}
+                />
+                <p class="!m-0 !mt-1 !p-0">{item.title}</p>
+              </h3>
+              <div class="flex flex-row items-center justify-start gap-2">
+                <div class="mt-5 flex items-center justify-center gap-2 text-sm font-medium text-[color:var(--color-text-muted)] md:mt-1">
+                  <span
+                    class="inline-flex items-center justify-center"
+                    aria-hidden="true"
+                    set:html={companyIcon}
+                  />
+                  <p class="!m-0 !mt-1 !p-0">{item.company}</p>
+                </div>
+                <div class="mt-5 flex flex-row items-center justify-center gap-2 text-sm text-[color:var(--color-text-muted)] md:mt-1">
+                  <span
+                    class="inline-flex items-center justify-center"
+                    aria-hidden="true"
+                    set:html={locationIcon}
+                  />
+                  <p class="!m-0 !mt-1 !p-0">{item.region}</p>
+                </div>
+                <div class="mt-5 flex items-center justify-center gap-2 text-sm text-[color:var(--color-text-muted)] md:mt-1">
+                  <span
+                    class="inline-flex items-center justify-center"
+                    aria-hidden="true"
+                    set:html={dateIconRaw}
+                  />
+                  <p class="!m-0 !mt-1 !p-0">2025-2025</p>
+                </div>
+              </div>
+            </div>
+            <p class="text-[color:var(--color-text-secondary)]">
+              {item.description}
+            </p>
+            {item.technologies && item.technologies.length > 0 && (
+              <div class="mt-3 flex flex-wrap gap-2">
+                {item.technologies.map((tech) => (
+                  <span
+                    class="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium"
+                    style="background: rgba(var(--accent-rgb),0.1); color: var(--accent); border: 1px solid rgba(var(--accent-rgb),0.3);"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>

@@ -1,0 +1,50 @@
+---
+import type { LogoItem } from '../../../data/logos';
+
+interface Props {
+  tools: LogoItem[];
+  speedMs?: number;
+}
+const { tools = [], speedMs = 100000 } = Astro.props as Props;
+---
+
+<div class="relative z-10 mx-auto overflow-hidden px-8 py-4">
+  <div
+    class="[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+  >
+    <div
+      class="flex w-max translate-x-0 will-change-transform"
+      style={`animation: carousel-scroll ${speedMs}ms linear infinite`}
+    >
+      {
+        [...tools, ...tools].map((tool) => (
+          <div class="group mx-4 flex min-w-[160px] flex-col items-center justify-center rounded-lg px-6 py-7 md:min-w-[180px]">
+            <div class="mb-2 flex h-10 w-10 items-center justify-center">
+              <img
+                src={tool.logo}
+                alt={tool.name}
+                width="40"
+                height="40"
+                class="light:grayscale light:opacity-80 h-full w-full object-contain transition duration-300 group-hover:scale-110 dark:brightness-0 dark:invert dark:saturate-0 dark:group-hover:filter-none"
+              />
+            </div>
+            <span class="text-sm font-semibold text-[color:var(--color-text-muted)] transition-colors">
+              {tool.name}
+            </span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes carousel-scroll {
+    0% {
+      transform: translateX(-20%);
+    }
+    100% {
+      transform: translateX(-70%);
+    }
+  }
+</style>

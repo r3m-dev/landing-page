@@ -1,0 +1,56 @@
+---
+interface NavItem {
+  id: string;
+  title: string;
+}
+interface Props {
+  prev?: NavItem | null;
+  next?: NavItem | null;
+}
+const { prev = null, next = null } = Astro.props as Props;
+---
+
+{
+  (prev || next) && (
+    <nav class="sw-post-nav mt-8 border-t border-[color:var(--color-border-light)] pt-4">
+      <div class="flex flex-col gap-3 md:flex-row md:justify-between md:gap-4">
+        {prev ? (
+          <a href={`/blog/${prev.id}/`} class="sw-nav-btn flex-1 no-underline">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+              />
+            </svg>
+            <div class="sw-nav-text">
+              <span class="sw-nav-label">Previous</span>
+              <span class="truncate">{prev.title}</span>
+            </div>
+          </a>
+        ) : (
+          <span />
+        )}
+
+        {next ? (
+          <a
+            href={`/blog/${next.id}/`}
+            class="sw-nav-btn flex-1 justify-end no-underline"
+          >
+            <div class="sw-nav-text text-right">
+              <span class="sw-nav-label">Next</span>
+              <span class="truncate">{next.title}</span>
+            </div>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="m8.59 16.59 1.41 1.41 6-6-6-6-1.41 1.41L13.17 12z"
+              />
+            </svg>
+          </a>
+        ) : (
+          <span />
+        )}
+      </div>
+    </nav>
+  )
+}

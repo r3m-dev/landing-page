@@ -1,0 +1,83 @@
+---
+import Button from '../ui/button/Button.astro';
+interface Cta {
+  text: string;
+  href: string;
+}
+
+interface Props {
+  title: string;
+  bio?: boolean;
+  subtitle?: string;
+  showCTA?: boolean;
+  primaryCTA?: Cta;
+  secondaryCTA?: Cta;
+}
+
+const {
+  title,
+  bio,
+  subtitle,
+  showCTA = false,
+  primaryCTA,
+  secondaryCTA,
+} = Astro.props as Props;
+
+import ProfileImage from '../../assets/images/profile.jpg';
+---
+
+<section class="w-full py-6 md:py-10">
+  <div class="mx-auto max-w-5xl px-4 text-center">
+    <h1
+      class="text-foreground text-4xl font-extrabold tracking-tight md:text-6xl"
+    >
+      <span
+        class="bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] bg-clip-text text-transparent"
+        >{title}</span
+      >
+    </h1>
+    {
+      subtitle && (
+        <p class="mx-auto mt-4 max-w-2xl text-lg text-[color:var(--color-text-secondary)] md:text-xl">
+          {subtitle}
+        </p>
+      )
+    }
+    {
+      bio && (
+        <div class="mx-auto flex items-center justify-center">
+          <img
+            src={ProfileImage.src}
+            alt="Hero Image"
+            class="h-1/6 w-1/6"
+            rounded-full
+          />
+          <p class="mx-auto mt-4 max-w-2xl text-lg text-[color:var(--color-text-secondary)] italic md:text-xl">
+            Hey there! I’m Adnan and I engineer software. Ten years ago I
+            started using Linux containers, and today I lead teams that solve
+            problems at scale. I have spent countless hours chasing pesky
+            side-effects in products, reducing latency of message brokers and
+            cutting costs of cloud providers. Nice to meet you! Have a look at
+            what I’ve been up to.
+          </p>
+        </div>
+      )
+    }
+    {
+      showCTA && (primaryCTA || secondaryCTA) && (
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          {primaryCTA && (
+            <Button href={primaryCTA.href} variant="primary" size="md">
+              {primaryCTA.text}
+            </Button>
+          )}
+          {secondaryCTA && (
+            <Button href={secondaryCTA.href} variant="secondary" size="md">
+              {secondaryCTA.text}
+            </Button>
+          )}
+        </div>
+      )
+    }
+  </div>
+</section>
